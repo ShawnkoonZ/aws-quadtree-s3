@@ -5,7 +5,7 @@
 public class FileUtil {
   private String fileName;
 
-  public FileUtil() {
-    this.fileName = "quad_tree_output.csv";
+  public FileUtil(String fileName) {
+    this.fileName = fileName;
   }
 }
