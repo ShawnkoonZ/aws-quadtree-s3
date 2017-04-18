@@ -1,6 +1,6 @@
 <h1>aws-quadtree-java</h1>
 
-<h2>If you decided to use any of the implemntations, please 'Star' this Project!</h2>
+<h2>If you decided to use any of the implementations, please 'Star' this Project!</h2>
 <ul>
   <li><strong>Project Name</strong> : aws-quadtree-java</li>
   <li><strong>Project description</strong> : QuadTree implementation on AWS DynamoDB using Java.</li>
