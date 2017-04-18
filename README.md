@@ -1,3 +1,4 @@
+[![Build Status](http://34.208.250.40:8080/job/aws-quadtree-java/badge/icon)](http://34.208.250.40:8080/job/aws-quadtree-java/)
 <h1>aws-quadtree-java</h1>
 <h2>If you decided to use any of the implemntations, please 'Star' this Project!</h2>
 <ul>
