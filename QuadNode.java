@@ -3,9 +3,9 @@ public class QuadNode{
    private QuadNode NE, NW, SW, SE;
    private double data;
    
-   public QuadNode(double xPos, double yPos, double value){
-      this.x = xPos;
-      this.y = yPos;
+   public QuadNode(double xCoordinate, double yCoordinate, double value){
+      this.x = xCoordinate;
+      this.y = yCoordinate;
       this.data = value;
    }
    
