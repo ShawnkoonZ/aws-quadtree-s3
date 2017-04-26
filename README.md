@@ -1,6 +1,6 @@
+[![Build Status](http://34.208.250.40:8080/job/aws-quadtree-java/badge/icon)](http://34.208.250.40:8080/job/aws-quadtree-java/)
 <h1>aws-quadtree-java</h1>
-
-<h2>If you decided to use any of the implemntations, please 'Star' this Project!</h2>
+<h2>If you decided to use any of the implementations, please 'Star' this Project!</h2>
 <ul>
   <li><strong>Project Name</strong> : aws-quadtree-java</li>
   <li><strong>Project description</strong> : QuadTree implementation on AWS DynamoDB using Java.</li>
@@ -17,6 +17,12 @@
 pp: https://docs.google.com/presentation/d/1lqhEhYGnqDLwFNhti0ljM-ST1YVF0vknnQrLUN1x11w/edit?usp=sharing
 
   Program will compile & run via command line, then the program will generate QuadTree based on the input x-axis & y-axis. Once the Tree is generated, program will output the tree into a file & at the same time implement QuadTree on AWS DynamoDB. Future idea is to be able to feed output file upto S3 bucket, Lambda function deploys EC2 instances on ECS cluster. Once each instances retreive QuadTree information, they all create QuadTree in Async manner.
+  
+-----------
+## Project Requirements.
+
+- Figure out how many output files will be generated based on x / y axis arguments.
+- Insert each output files into Specific AWS S3 bucket as they are created. 
 
 -----------
 ## Instruction ( Developing ).
