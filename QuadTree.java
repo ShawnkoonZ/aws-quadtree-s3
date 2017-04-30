@@ -43,7 +43,7 @@ public class QuadTree {
    }
    
    public void generateQuadTree(){
-      System.out.println("Index: <Node Number>, [(<xMin>,<xMax>),(<yMin>,<yMax>)]");
+      System.out.println("Index: <Node Number>, [(<xMin>,<yMin>),(<xMax>,<yMax>)]");
       this.generateQuadTree(this.xMin, this.yMin, this.xMin, this.yMax);
    }
    
