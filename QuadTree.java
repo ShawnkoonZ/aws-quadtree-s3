@@ -8,18 +8,35 @@ public class QuadTree {
    private int gap;
   
    public QuadTree(){
-      this.xMin = -1000;
-      this.xMax = 1000;
-      this.yMin = -1000;
-      this.yMax = 1000;
-      this.index = 0;
-      this.gap = 1;
+      this.initDefaultQuadTree();
    }
 
    public QuadTree(double xLow, double xHigh, double yLow, double yHigh, int gap){
+      if(this.isPowerOfTwo(xHigh, yHigh)){
+         this.initCustomQuadTree(xLow, xHigh, yLow, yHigh, gap);
+      }
+      else{
+         System.out.println("Unable to instantiate a QuadTree with the paramaters you defined!\n" +
+                            "Make sure that either your xMax or yMax are a power of 2.\n" +
+                            "Instantiating a QuadTree with (0,0,64,64,1) instead.\n"
+                           );
+         this.initDefaultQuadTree();
+      }
+   }
+   
+   public void initDefaultQuadTree(){
+      this.xMin = 0;
+      this.yMin = 0;
+      this.xMax = 64;
+      this.yMax = 64;
+      this.index = 0;
+      this.gap = 1;
+   }
+   
+   public void initCustomQuadTree(double xLow, double yLow, double xHigh, double yHigh, int gap){
       this.xMin = xLow;
-      this.xMax = xHigh;
       this.yMin = yLow;
+      this.xMax = xHigh;
       this.yMax = yHigh;
       this.index = 0;
       this.gap = gap;
@@ -27,34 +44,25 @@ public class QuadTree {
    
    public void generateQuadTree(){
       System.out.println("Index: <Node Number>, [(<xMin>,<xMax>),(<yMin>,<yMax>)]");
-      this.generateQuadTree(this.xMin, this.xMax, this.yMin, this.yMax);
+      this.generateQuadTree(this.xMin, this.yMin, this.xMin, this.yMax);
+   }
+   
+   private void generateQuadTree(double xMin, double yMin, double xMax, double yMax){                         
+      System.out.println("Index: " + (this.index++) + ", [(" + xMin + "," + yMin + "),(" + xMax + "," + yMax + ")]");      
+                         
+      if(this.isWithinGap(this.gap,xMin,yMin,xMax,yMax)){return;}
+      
+      this.generateQuadTree((xMax-xMin)/2 + xMin, (yMax-yMin)/2 + yMin, xMax, yMax); //NE QI
+      this.generateQuadTree(xMin, (yMax-yMin)/2 + yMin, (xMax-xMin)/2 + xMin, yMax); //NW QII
+      this.generateQuadTree(xMin, yMin, (xMax-xMin)/2 + xMin, (yMax-yMin)/2 + yMin); //SW QIII
+      this.generateQuadTree((xMax-xMin)/2 + xMin, yMin, xMax, (yMax-yMin)/2 + yMin); //SE QIV                
+   }
+   
+   private boolean isPowerOfTwo(double xMax, double yMax){
+      return true;
    }
    
    private boolean isWithinGap(int gap, double xMin, double yMin, double xMax, double yMax){
       return (xMax - xMin == gap) || (yMax - yMin == gap);
-   }
-   
-   private void generateQuadTree(double xMin, double yMin, double xMax, double yMax){                         
-      System.out.println("Index: " + this.index++ + ", [(" + xMin + 
-                         "," + yMin + "),(" + xMax + 
-                         "," + yMax + ")]");      
-                         
-      if(this.isWithinGap(this.gap,xMin,yMin,xMax,yMax)){return;}
-      
-      //NW
-      this.generateQuadTree(xMin, (yMax - yMin) / 2 + yMin,
-                            (xMax - xMin) / 2 + xMin, yMax);
-                            
-      //SW
-      this.generateQuadTree(xMin, yMin, (xMax - xMin) / 2 + xMin,
-                            (yMax - yMin) / 2 + yMin);
-      
-      //SE
-      this.generateQuadTree((xMax - xMin) / 2 + xMin, yMin, xMax,
-                            (yMax - yMin) / 2 + yMin);
-      
-      //NE                      
-      this.generateQuadTree((xMax - xMin) / 2 + xMin, (yMax - yMin) / 2 + yMin,
-                            xMax, yMax);
    }
 }
