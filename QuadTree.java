@@ -4,18 +4,20 @@
  */
  
 import java.lang.Math;
+import java.io.IOException;
 
 public class QuadTree {
    private double xMin, xMax, yMin, yMax;
-   private int index;
-   private int gap;
+   private int index, gap, numberOfFiles, nodeCounter, fileCounter;
+   private String prefix, fileExtension; 
+   private FileUtil treeBuilder;
   
    public QuadTree(){
       this.initDefaultQuadTree();
    }
 
    public QuadTree(double xLow, double xHigh, double yLow, double yHigh, int gap){
-      if(this.isPowerOfTwo(xHigh, yHigh)){
+      if(this.isPowerOfTwo(xHigh) || this.isPowerOfTwo(yHigh)){
          this.initCustomQuadTree(xLow, xHigh, yLow, yHigh, gap);
       }
       else{
@@ -34,6 +36,9 @@ public class QuadTree {
       this.yMax = 64;
       this.index = 0;
       this.gap = 1;
+      this.prefix = "aws";
+      this.fileExtension = "csv";
+      this.treeBuilder = new FileUtil(this.prefix);
    }
    
    public void initCustomQuadTree(double xLow, double yLow, double xHigh, double yHigh, int gap){
@@ -43,22 +48,70 @@ public class QuadTree {
       this.yMax = yHigh;
       this.index = 0;
       this.gap = gap;
+      this.prefix = "aws";
+      this.fileExtension = "csv";
+      this.treeBuilder = new FileUtil(this.prefix);
    }
    
-   public void generateQuadTree(){
+   public void generateQuadTree(int partitionLimit) throws IOException{
       System.out.println("Index: <Node Number>, [(<xMin>,<yMin>),(<xMax>,<yMax>)]");
-      this.generateQuadTree(this.xMin, this.yMin, this.xMin, this.yMax);
+      double maxCoordinate = 0.0;
+      if(this.isPowerOfTwo(this.xMax)){
+         maxCoordinate = this.xMax;
+      }
+      else if(this.isPowerOfTwo(this.yMax)){
+         maxCoordinate = this.yMax;
+      }
+      else{
+         System.out.println("Error: maximum coordinate(s) are not a power of 2!");
+         System.exit(-1);
+      }
+      this.numberOfFiles = this.treeBuilder.calculateNumberOfFiles(this.getTotalNodes(maxCoordinate), partitionLimit);
+      this.nodeCounter = 0;
+      this.fileCounter = 0;
+      try{
+         this.generateQuadTree(this.xMin, this.yMin, this.xMax, this.yMax, partitionLimit);
+      }
+      catch(IOException error){
+         System.out.println(error);
+      }
    }
    
-   private void generateQuadTree(double xMin, double yMin, double xMax, double yMax){                         
-      System.out.println("Index: " + (this.index++) + ", [(" + xMin + "," + yMin + "),(" + xMax + "," + yMax + ")]");      
+   public void setFileExtension(String extension){
+      this.fileExtension = extension;
+   }
+   
+   public void setPrefix(String prefix){
+      this.prefix = prefix;
+   }
+   
+   private void generateQuadTree(double xMin, double yMin, double xMax, double yMax, int partitionLimit) throws IOException{                         
+      System.out.println("Index: " + (this.index++) + ", [(" + xMin + "," + yMin + "),(" + xMax + "," + yMax + ")]");
+      String node = "Index: " + (this.index++) + ", [(" + xMin + "," + yMin + "),(" + xMax + "," + yMax + ")]";     
+      this.nodeCounter++;
+      try{
+         if(this.nodeCounter == partitionLimit){
+            this.fileCounter++;
+            this.treeBuilder.buildFile(this.fileExtension, this.fileCounter);
+            this.treeBuilder.bufferClear();
+            
+            if(this.fileCounter <= this.numberOfFiles){
+               this.nodeCounter = 0;
+            }
+         }
+         
+         this.treeBuilder.bufferAdd(node);
+      }
+      catch(IOException error){
+         System.out.println(error);
+      }
                          
       if(this.isWithinGap(this.gap,xMin,yMin,xMax,yMax)){return;}
       
-      this.generateQuadTree((xMax-xMin)/2 + xMin, (yMax-yMin)/2 + yMin, xMax, yMax); //NE QI
-      this.generateQuadTree(xMin, (yMax-yMin)/2 + yMin, (xMax-xMin)/2 + xMin, yMax); //NW QII
-      this.generateQuadTree(xMin, yMin, (xMax-xMin)/2 + xMin, (yMax-yMin)/2 + yMin); //SW QIII
-      this.generateQuadTree((xMax-xMin)/2 + xMin, yMin, xMax, (yMax-yMin)/2 + yMin); //SE QIV                
+      this.generateQuadTree((xMax-xMin)/2 + xMin, (yMax-yMin)/2 + yMin, xMax, yMax, partitionLimit); //NE QI
+      this.generateQuadTree(xMin, (yMax-yMin)/2 + yMin, (xMax-xMin)/2 + xMin, yMax, partitionLimit); //NW QII
+      this.generateQuadTree(xMin, yMin, (xMax-xMin)/2 + xMin, (yMax-yMin)/2 + yMin, partitionLimit); //SW QIII
+      this.generateQuadTree((xMax-xMin)/2 + xMin, yMin, xMax, (yMax-yMin)/2 + yMin, partitionLimit); //SE QIV                
    }
    
    private int getTotalNodes(double maxCoordinate){
@@ -73,7 +126,7 @@ public class QuadTree {
       return totalNodes;
    }
    
-   private boolean isPowerOfTwo(double xMax, double yMax){
+   private boolean isPowerOfTwo(double number){
       return true;
    }
    
