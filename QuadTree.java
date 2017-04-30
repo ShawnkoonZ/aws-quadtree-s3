@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class QuadTree {
    private double xMin, xMax, yMin, yMax;
-   private int index, gap, numberOfFiles, nodeCounter, fileCounter;
+   private int index, gap, numberOfFiles, numberOfNodes, nodeCounter, fileCounter;
    private String prefix, fileExtension; 
    private FileUtil treeBuilder;
   
@@ -66,7 +66,8 @@ public class QuadTree {
          System.out.println("Error: maximum coordinate(s) are not a power of 2!");
          System.exit(-1);
       }
-      this.numberOfFiles = this.treeBuilder.calculateNumberOfFiles(this.getTotalNodes(maxCoordinate), partitionLimit);
+      this.numberOfNodes = this.getTotalNodes(maxCoordinate);
+      this.numberOfFiles = this.treeBuilder.calculateNumberOfFiles(numberOfNodes, partitionLimit);
       this.nodeCounter = 0;
       this.fileCounter = 0;
       try{
@@ -86,11 +87,19 @@ public class QuadTree {
    }
    
    private void generateQuadTree(double xMin, double yMin, double xMax, double yMax, int partitionLimit) throws IOException{                         
-      System.out.println("Index: " + (this.index++) + ", [(" + xMin + "," + yMin + "),(" + xMax + "," + yMax + ")]");
-      String node = "Index: " + (this.index++) + ", [(" + xMin + "," + yMin + "),(" + xMax + "," + yMax + ")]";     
+      String node = "Index: " + (this.index++) + ", [(" + xMin + "," + yMin + "),(" + xMax + "," + yMax + ")]";
+      
+      if(index == 85){
+         System.out.println("Step here.");
+      }
+      
+      System.out.println(node);    
       this.nodeCounter++;
+      
       try{
-         if(this.nodeCounter == partitionLimit){
+         this.treeBuilder.bufferAdd(node);
+         
+         if(this.nodeCounter == partitionLimit || (index - 1) == this.numberOfNodes){
             this.fileCounter++;
             this.treeBuilder.buildFile(this.fileExtension, this.fileCounter);
             this.treeBuilder.bufferClear();
@@ -99,8 +108,6 @@ public class QuadTree {
                this.nodeCounter = 0;
             }
          }
-         
-         this.treeBuilder.bufferAdd(node);
       }
       catch(IOException error){
          System.out.println(error);
@@ -126,7 +133,7 @@ public class QuadTree {
       return totalNodes;
    }
    
-   private boolean isPowerOfTwo(double number){
+   private boolean isPowerOfTwo(double realNumber){
       return true;
    }
    
