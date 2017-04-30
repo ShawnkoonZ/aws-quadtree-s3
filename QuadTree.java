@@ -61,7 +61,7 @@ public class QuadTree {
       this.generateQuadTree((xMax-xMin)/2 + xMin, yMin, xMax, (yMax-yMin)/2 + yMin); //SE QIV                
    }
    
-   public int getTotalNodes(double maxCoordinate){
+   private int getTotalNodes(double maxCoordinate){
       double base = 2.0;
       double exponentH = Math.log(maxCoordinate)/Math.log(base); //log base b of n = log base e of n / log base e of b
       int totalNodes = 0;
