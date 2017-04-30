@@ -89,10 +89,6 @@ public class QuadTree {
    private void generateQuadTree(double xMin, double yMin, double xMax, double yMax, int partitionLimit) throws IOException{                         
       String node = "Index: " + (this.index++) + ", [(" + xMin + "," + yMin + "),(" + xMax + "," + yMax + ")]";
       
-      if(index == 85){
-         System.out.println("Step here.");
-      }
-      
       System.out.println(node);    
       this.nodeCounter++;
       
