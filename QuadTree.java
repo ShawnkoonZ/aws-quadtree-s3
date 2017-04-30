@@ -2,6 +2,9 @@
  * QuadTree DS File.
  * Composed with QuadTree Datastructure.
  */
+ 
+import java.lang.Math;
+
 public class QuadTree {
    private double xMin, xMax, yMin, yMax;
    private int index;
@@ -56,6 +59,18 @@ public class QuadTree {
       this.generateQuadTree(xMin, (yMax-yMin)/2 + yMin, (xMax-xMin)/2 + xMin, yMax); //NW QII
       this.generateQuadTree(xMin, yMin, (xMax-xMin)/2 + xMin, (yMax-yMin)/2 + yMin); //SW QIII
       this.generateQuadTree((xMax-xMin)/2 + xMin, yMin, xMax, (yMax-yMin)/2 + yMin); //SE QIV                
+   }
+   
+   public int getTotalNodes(double maxCoordinate){
+      double base = 2.0;
+      double exponentH = Math.log(maxCoordinate)/Math.log(base); //log base b of n = log base e of n / log base e of b
+      int totalNodes = 0;
+      
+      for(int i = 1; i <= exponentH; i++){
+         totalNodes += Math.pow(4,i);
+      }
+      
+      return totalNodes;
    }
    
    private boolean isPowerOfTwo(double xMax, double yMax){
