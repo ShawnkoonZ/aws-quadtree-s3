@@ -9,7 +9,7 @@ public class QuadTreeTester {
    public static void main(String[] args) throws IOException {
       QuadTree tree = new QuadTree(0,0,8,8,1);
       try{
-         tree.generateQuadTree(10);
+         tree.generateQuadTree(10); //generate the QuadTree between 10 files
       }
       catch(IOException error){
          System.out.println(error);

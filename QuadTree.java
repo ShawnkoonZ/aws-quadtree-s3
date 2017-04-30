@@ -71,6 +71,7 @@ public class QuadTree {
       this.nodeCounter = 0;
       this.fileCounter = 0;
       try{
+         if(partitionLimit < 1){partitionLimit = 10;}
          this.generateQuadTree(this.xMin, this.yMin, this.xMax, this.yMax, partitionLimit);
       }
       catch(IOException error){
@@ -86,8 +87,25 @@ public class QuadTree {
       this.prefix = prefix;
    }
    
+   private String buildNode(int index, double xMin, double yMin, double xMax, double yMax){
+      if(this.fileExtension.equals("csv")){
+         String node = "";
+         
+         if(this.nodeCounter == 0){
+            node += "Index\txMin\tyMin\txMax\tyMax\n";   
+         }
+         
+         node += (this.index++) + "\t" + xMin + "\t" + yMin + "\t" + xMax + "\t" + yMax;
+         
+         return node;
+      }
+      else{
+         return "Index: " + (this.index++) + ", [(" + xMin + "," + yMin + "),(" + xMax + "," + yMax + ")]";
+      }
+   }
+   
    private void generateQuadTree(double xMin, double yMin, double xMax, double yMax, int partitionLimit) throws IOException{                         
-      String node = "Index: " + (this.index++) + ", [(" + xMin + "," + yMin + "),(" + xMax + "," + yMax + ")]";
+      String node = this.buildNode(this.index, xMin, yMin, xMax, yMax);
       
       System.out.println(node);    
       this.nodeCounter++;
