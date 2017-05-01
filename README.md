@@ -1,12 +1,12 @@
-<h1>aws-quadtree-java</h1>
+<h1>aws-quadtree-s3</h1>
 <h2>If you decided to use any of the implementations, please 'Star' this Project!</h2>
 <ul>
-  <li><strong>Project Name</strong> : aws-quadtree-java</li>
+  <li><strong>Project Name</strong> : aws-quadtree-s3</li>
   <li><strong>Project description</strong> : PR QuadTree implementation on AWS DynamoDB using Java.</li>
   
   <li><strong>Used Languages</strong> : Java</li>
   
-  <li><strong>Used Editors</strong> : VSCode</li>
+  <li><strong>Used Editors</strong> : VSCode, Eclipse, Vi</li>
   
   <li><strong>Start Date</strong> : April, 2017</li>
 </ul>
