@@ -11,7 +11,7 @@ import java.io.IOException;
 import version2.*;
 
 public class QuadTreeTester {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     double xLow = 0;
     double yLow = 0;
     double xHigh = 8;
