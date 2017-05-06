@@ -17,7 +17,7 @@ public class QuadTreeTester {
     double xHigh = 8;
     double yHigh = 8;
     double minimumGap = 1;
-    long partitionLimit = 10;
+    int partitionLimit = 10;
 
     QuadTree tree = new QuadTree(xLow, yLow, xHigh, yHigh, minimumGap);
 
