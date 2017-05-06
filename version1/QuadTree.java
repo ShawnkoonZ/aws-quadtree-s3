@@ -18,9 +18,9 @@ public class QuadTree {
       this.initDefaultQuadTree();
    }
 
-   public QuadTree(double xLow, double xHigh, double yLow, double yHigh, int gap){
+   public QuadTree(double xLow, double yLow, double xHigh, double yHigh, int gap){
       if(this.isPowerOfTwo(xHigh) || this.isPowerOfTwo(yHigh)){
-         this.initCustomQuadTree(xLow, xHigh, yLow, yHigh, gap);
+         this.initCustomQuadTree(xLow, yLow, xHigh, yHigh, gap);
       }
       else{
          System.out.println("Unable to instantiate a QuadTree with the paramaters you defined!\n" +
