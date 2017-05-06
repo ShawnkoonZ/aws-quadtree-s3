@@ -2,7 +2,9 @@
  * FileUtil File.
  * Composed with File Utility functions.
  */
- 
+
+package version1;
+
 import java.lang.Math;
 import java.io.Writer;
 import java.io.StringWriter;

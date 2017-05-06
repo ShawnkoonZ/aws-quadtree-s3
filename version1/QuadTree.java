@@ -2,7 +2,9 @@
  * QuadTree DS File.
  * Composed with QuadTree Datastructure.
  */
- 
+
+package version1;
+
 import java.lang.Math;
 import java.io.IOException;
 
