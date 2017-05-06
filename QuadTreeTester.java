@@ -11,23 +11,18 @@ import java.io.IOException;
 import version2.*;
 
 public class QuadTreeTester {
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
     double xLow = 0;
     double yLow = 0;
     double xHigh = 8;
     double yHigh = 8;
     double minimumGap = 1;
-    int partitionLimit = 10;
+    long partitionLimit = 10;
 
     QuadTree tree = new QuadTree(xLow, yLow, xHigh, yHigh, minimumGap);
 
-    try {
-      System.out.println("=> Process begin...");
-      tree.generateQuadTree(partitionLimit);
-      System.out.println("=> Tree generating process finished...");
-    }
-    catch(IOException error)  {
-      System.out.println(error);
-    }
+    System.out.println("=> Process begin...");
+    tree.generateQuadTree(partitionLimit);
+    System.out.println("=> Tree generating process finished...");
   }
 }
