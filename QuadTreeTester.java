@@ -7,24 +7,19 @@
 import java.io.IOException;
 
 // Version Imports
-import version1.*;
+// import version1.*;
+import version2.*;
 
 public class QuadTreeTester {
-   public static void main(String[] args) throws IOException {
-      this.executeVersion_2();
-   }
-
-   private static void executeVersion_1() {
+  public static void main(String[] args) throws IOException {
     QuadTree tree = new QuadTree(0,0,8,8,1);
-      try{
-         tree.generateQuadTree(10);
-      }
-      catch(IOException error){
-         System.out.println(error);
-      }
-   }
-
-   private static void executeVersion_2() {
-     System.out.println("Please Implement the solution.");
-   }
+    try {
+      System.out.println("=> Process begin...");
+      tree.generateQuadTree(10);
+      System.out.println("=> Tree generating process finished...");
+    }
+    catch(IOException error)  {
+      System.out.println(error);
+    }
+  }
 }
