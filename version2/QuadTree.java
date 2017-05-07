@@ -10,6 +10,22 @@ package version2;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.io.IOException;
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
+
 
 public class QuadTree {
    private TreeNode rootNode;
@@ -18,6 +34,9 @@ public class QuadTree {
    private FileUtil treeFileBuilder;
    private String[] nodeCounterInBinary = {"00", "01", "10", "11"};
    private String startingBinary, filePrefix, fileExtension;
+   private AWSCredentials credentials;
+   private AmazonS3 s3;
+   private Region awsRegion;
 
    private void init(double xLow, double yLow, double xHigh, double yHigh, double minimumGap) {
      this.nodeCounter = 0;
@@ -31,6 +50,20 @@ public class QuadTree {
      this.minimumGap = minimumGap;
      this.checkForExit();
      this.numberOfFiles = this.treeFileBuilder.calculateNumberOfFiles(this.numberOfNodes, this.partitionLimit);
+     
+     //init AWS
+     this.credentials = null;
+     try{
+       this.credentials = new ProfileCredentialsProvider().getCredentials();
+     }
+     catch(Exception e){
+       throw new AmazonClientException("Cannot load the credentials from the credential profiles file!\n", e);
+     }
+     
+     this.s3 = new AmazonS3Client(this.credentials);
+     this.awsRegion = Region.getRegion(Regions.US_WEST_2);
+     
+     this.s3.setRegion(this.awsRegion);
    }
 
    public QuadTree() {

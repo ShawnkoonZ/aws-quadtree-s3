@@ -1,5 +1,4 @@
 *.class
-*.csv
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -14,3 +13,6 @@ hs_err_pid*
 
 # IDE / Editors
 .vscode
+
+# other files and paths to ignore
+*.csv
