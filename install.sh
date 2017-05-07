@@ -1,4 +1,4 @@
-#!/usr/bin
+#!/bin/sh
 
 wget https://sdk-for-java.amazonwebservices.com/latest/aws-java-sdk.zip
 
