@@ -18,23 +18,23 @@ pp: https://docs.google.com/presentation/d/1lqhEhYGnqDLwFNhti0ljM-ST1YVF0vknnQrL
   The program will compile and run via command line, then the program will generate a QuadTree based on the input (xMin,yMin,xMax,yMax). Once the Tree is generated, the program will output the Tree into a file and simultaneously implement the QuadTree on AWS DynamoDB. Our future idea is to be able to feed the output file(s) up to an S3 bucket and use the Lambda function to deploy EC2 instances on an ECS cluster. When an instance receives the QuadTree information, it will create the QuadTree in an asynchronous manner.
   
 -----------
-## Project Requirements.
+## Project Requirements
 
 - Figure out how many output files will be generated based on x / y axis arguments.
 - Insert each output files into Specific AWS S3 bucket as they are created. 
 
 -----------
-## Instruction ( Developing ).
+## Instructions
 
 1. Fork & Clone this repository.
 
 2. Set up AWS Credentials. (**See the Quick Start Below**)
 
-3. Install AWS Java SDK on your machine.
+3. Give install.sh permissions by typing `chmod +x install.sh`
 
-4. Compile java files using `javac *.java`
+4. Run install.sh to install the SDK
 
-5. Run the compiled `QuadTreeTester.java` file by typing `java QuadTreeTester <xMin> <yMin> <xMax> <yMax>`
+5. Compile and run by typing `ant`
 
 6. Enjoy.
 
