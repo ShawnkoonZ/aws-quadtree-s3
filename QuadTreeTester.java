@@ -17,7 +17,7 @@ public class QuadTreeTester {
     double xHigh = 8;
     double yHigh = 8;
     double minimumGap = 1;
-    String bucketName = "quadtree-main-bucket";
+    String bucketName = "tf-quadtree-main-bucket";
     int partitionLimit = 10;
 
     QuadTree tree = new QuadTree(xLow, yLow, xHigh, yHigh, minimumGap, bucketName);

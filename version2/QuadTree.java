@@ -63,7 +63,7 @@ public class QuadTree {
    }
 
    public QuadTree() {
-     this.init(0,0,8,8,1,"quadtree-main-bucket");
+     this.init(0,0,8,8,1,"tf-quadtree-main-bucket");
    }
 
    public QuadTree(double xLow, double yLow, double xHigh, double yHigh, double minimumGap, String bucketName) {
