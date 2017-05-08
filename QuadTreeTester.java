@@ -17,10 +17,12 @@ public class QuadTreeTester {
     double xHigh = 8;
     double yHigh = 8;
     double minimumGap = 1;
-    String bucketName = "tf-quadtree-main-bucket";
     int partitionLimit = 10;
 
-    QuadTree tree = new QuadTree(xLow, yLow, xHigh, yHigh, minimumGap, bucketName);
+    QuadTree tree = new QuadTree(xLow, yLow, xHigh, yHigh, minimumGap);
+    tree.setBucketName("tf-quadtree-main-bucket");
+    tree.setFilePrefix("aws");
+    tree.setFileExtension("csv");
 
     System.out.println("=> Process begin...");
     tree.generateQuadTree(partitionLimit);

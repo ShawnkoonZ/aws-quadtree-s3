@@ -43,10 +43,10 @@ public class QuadTree {
    private AmazonS3 s3;
    private Region awsRegion;
 
-   private void init(double xLow, double yLow, double xHigh, double yHigh, double minimumGap, String bucketName) {
+   private void init(double xLow, double yLow, double xHigh, double yHigh, double minimumGap) {
      this.startingBinary = "";
+     this.bucketName = "";
      this.minimumGap = minimumGap;
-     this.bucketName = bucketName;
      
      this.setCounter(0);
      this.setFilePrefix("aws");
@@ -58,12 +58,10 @@ public class QuadTree {
      
      this.checkForExit();
      this.numberOfFiles = this.treeFileBuilder.calculateNumberOfFiles(this.numberOfNodes, this.partitionLimit);
-     
-     this.initAws();
    }
 
    public QuadTree() {
-     this.init(0,0,8,8,1,"tf-quadtree-main-bucket");
+     this.init(0,0,8,8,1);
    }
 
    public QuadTree(double xLow, double yLow, double xHigh, double yHigh, double minimumGap, String bucketName) {
@@ -82,7 +80,13 @@ public class QuadTree {
       this.partitionLimit = upperBound;
    }  
    
+   public void setBucketName(String name){
+      this.bucketName = name;
+   }
+   
    public void generateQuadTree(int partitionLimit) throws IOException {
+      this.initAws();
+      
       Queue<TreeNode> treeQueue = new LinkedList<TreeNode>();
       treeQueue.add(this.rootNode);
       TreeNode curNode = treeQueue.poll();
@@ -136,7 +140,7 @@ public class QuadTree {
                )
             );
          }
-         else {;
+         else {
             String fileNode = this.buildNodeForFile(curNode.binaryIndex, curNode.xLow, curNode.yLow, curNode.xHigh, curNode.yHigh);
             this.leafCounter++;
             this.numberOfLeaves++;
@@ -185,6 +189,9 @@ public class QuadTree {
    }
    
    private void initAws(){
+     if(this.bucketName.equals("")){
+       this.bucketName = "tf-quadtree-main-bucket"
+     }
      this.credentials = null;
      
      try{
