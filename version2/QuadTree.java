@@ -8,8 +8,13 @@
 package version2;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
@@ -33,45 +38,36 @@ public class QuadTree {
    private int partitionLimit, nodeCounter, leafCounter, fileCounter, numberOfNodes, numberOfFiles, numberOfLeaves;
    private FileUtil treeFileBuilder;
    private String[] nodeCounterInBinary = {"00", "01", "10", "11"};
-   private String startingBinary, filePrefix, fileExtension;
+   private String startingBinary, filePrefix, fileExtension, bucketName;
    private AWSCredentials credentials;
    private AmazonS3 s3;
    private Region awsRegion;
 
-   private void init(double xLow, double yLow, double xHigh, double yHigh, double minimumGap) {
-     this.nodeCounter = 0;
-     this.leafCounter = 0;
+   private void init(double xLow, double yLow, double xHigh, double yHigh, double minimumGap, String bucketName) {
      this.startingBinary = "";
+     this.minimumGap = minimumGap;
+     this.bucketName = bucketName;
+     
+     this.setCounter(0);
      this.setFilePrefix("aws");
      this.setFileExtension("csv");
      this.setPartitionLimit(10);
+     
      this.rootNode = new TreeNode(xLow, yLow, xHigh, yHigh, startingBinary, this.nodeCounter);
      this.treeFileBuilder = new FileUtil(this.filePrefix);
-     this.minimumGap = minimumGap;
+     
      this.checkForExit();
      this.numberOfFiles = this.treeFileBuilder.calculateNumberOfFiles(this.numberOfNodes, this.partitionLimit);
      
-     //init AWS
-     this.credentials = null;
-     try{
-       this.credentials = new ProfileCredentialsProvider().getCredentials();
-     }
-     catch(Exception e){
-       throw new AmazonClientException("Cannot load the credentials from the credential profiles file!\n", e);
-     }
-     
-     this.s3 = new AmazonS3Client(this.credentials);
-     this.awsRegion = Region.getRegion(Regions.US_WEST_2);
-     
-     this.s3.setRegion(this.awsRegion);
+     this.initAws();
    }
 
    public QuadTree() {
-     this.init(0,0,8,8,1);
+     this.init(0,0,8,8,1,"ewu.quadtree.s3");
    }
 
-   public QuadTree(double xLow, double yLow, double xHigh, double yHigh, double minimumGap) {
-     this.init(xLow, yLow, xHigh, yHigh, minimumGap);
+   public QuadTree(double xLow, double yLow, double xHigh, double yHigh, double minimumGap, String bucketName) {
+     this.init(xLow, yLow, xHigh, yHigh, minimumGap, bucketName);
    }
    
    public void setFileExtension(String extension){
@@ -84,12 +80,14 @@ public class QuadTree {
    
    public void setPartitionLimit(int upperBound){
       this.partitionLimit = upperBound;
-   }
+   }  
    
    public void generateQuadTree(int partitionLimit) throws IOException {
       Queue<TreeNode> treeQueue = new LinkedList<TreeNode>();
       treeQueue.add(this.rootNode);
       TreeNode curNode = treeQueue.poll();
+      
+      System.out.println("Generating QuadTree...\n");
 
       while(curNode != null) {
          if (!curNode.isLeafNode()) {
@@ -138,8 +136,7 @@ public class QuadTree {
                )
             );
          }
-         else {
-            System.out.print("\n LEAF ! ");
+         else {;
             String fileNode = this.buildNodeForFile(curNode.binaryIndex, curNode.xLow, curNode.yLow, curNode.xHigh, curNode.yHigh);
             this.leafCounter++;
             this.numberOfLeaves++;
@@ -149,8 +146,11 @@ public class QuadTree {
                
                if(this.leafCounter == this.partitionLimit || this.nodeCounter == this.numberOfNodes){
                   this.fileCounter++;
-                  this.treeFileBuilder.buildFile(this.fileExtension, this.fileCounter);
+                  
+                  File nodeFile = this.treeFileBuilder.buildFile(this.fileExtension, this.fileCounter);
                   this.treeFileBuilder.bufferClear();
+                  
+                  this.putFileToS3(nodeFile);
                   
                   if(this.fileCounter <= this.numberOfFiles){
                      this.leafCounter = 0;
@@ -162,14 +162,79 @@ public class QuadTree {
             }          
          }
 
-         System.out.println(curNode);
          this.nodeCounter++;
-
          curNode = treeQueue.poll();
       }
-      System.out.println("# Total Elements : " + this.nodeCounter);
-      System.out.println("# Total Leaf Elements : " + this.numberOfLeaves);
+      
+      this.displayResults();   
    }   
+   
+   public void displayResults() throws IOException{
+   
+     System.out.println("# Total Elements : " + this.nodeCounter);
+     System.out.println("# Total Leaf Elements : " + this.numberOfLeaves);
+     System.out.println("# Fetching data from bucket : " + this.bucketName + "\n");
+     
+     for(int i = 1; i < this.numberOfFiles - 1; i++){
+       String key = this.filePrefix + i;
+       System.out.println("Key: " + key);
+       S3Object object = s3.getObject(new GetObjectRequest(this.bucketName, key));
+
+       this.displayTextInputStream(object.getObjectContent());
+     }
+   }
+   
+   private void initAws(){
+     this.credentials = null;
+     
+     try{
+       this.credentials = new ProfileCredentialsProvider().getCredentials();
+     }
+     catch(Exception e){
+       throw new AmazonClientException("Cannot load the credentials from the credential profiles file!\n", e);
+     }
+     
+     this.s3 = new AmazonS3Client(this.credentials);
+     this.awsRegion = Region.getRegion(Regions.US_WEST_2);
+     
+     this.s3.setRegion(this.awsRegion);
+     
+     boolean isBucketOnline = false;
+     List<Bucket> buckets = this.s3.listBuckets();
+     for(Bucket currentBucket : buckets){
+       if(currentBucket.getName().equals(this.bucketName)){
+         isBucketOnline = true;
+       }
+     }
+     
+     if(!isBucketOnline){
+       this.s3.createBucket(this.bucketName);
+       System.out.println("Creating new S3 bucket: " + this.bucketName);
+     }
+   }
+   
+   private void putFileToS3(File file){
+     String key = this.filePrefix + this.fileCounter;
+     
+     System.out.println("Uploading " + key + "." + this.fileExtension + " to " + this.bucketName);
+     this.s3.putObject(new PutObjectRequest(this.bucketName, key, file));
+   }
+   
+   private void setCounter(int count){
+     this.nodeCounter = count;
+     this.leafCounter = count;
+   }
+   
+   private void displayTextInputStream(InputStream input) throws IOException { //https://github.com/aws/aws-sdk-java/blob/master/src/samples/AmazonS3/S3Sample.java
+     BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+     while (true) {
+       String line = reader.readLine();
+       if (line == null) break;
+
+       System.out.println("    " + line);
+     }
+     System.out.println();
+   }
   
 	private boolean isPowerTwo(int number) { return (number & (number - 1)) == 0; }
 

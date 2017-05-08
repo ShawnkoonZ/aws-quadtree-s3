@@ -17,9 +17,10 @@ public class QuadTreeTester {
     double xHigh = 8;
     double yHigh = 8;
     double minimumGap = 1;
+    String bucketName = "ewu.quadtree.s3";
     int partitionLimit = 10;
 
-    QuadTree tree = new QuadTree(xLow, yLow, xHigh, yHigh, minimumGap);
+    QuadTree tree = new QuadTree(xLow, yLow, xHigh, yHigh, minimumGap, bucketName);
 
     System.out.println("=> Process begin...");
     tree.generateQuadTree(partitionLimit);

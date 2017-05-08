@@ -41,18 +41,23 @@ public class FileUtil {
       }
    }
    
-   public void buildFile(String fileExtension, int fileNumber) throws IOException{
+   public File buildFile(String fileExtension, int fileNumber) throws IOException{
+      File outputFile = null;
       try{
-         File outputFile = new File(this.filePrefix + String.valueOf(fileNumber) + "." + fileExtension);
+         outputFile = new File(this.filePrefix + String.valueOf(fileNumber) + "." + fileExtension);
          outputFile.createNewFile();
          
          FileOutputStream outputStream = new FileOutputStream(outputFile);
          String input = this.fileBuffer.toString();
          outputStream.write(input.getBytes());
+         
+         return outputFile;
       }
       catch(IOException error){
          System.out.println(error);
       }
+      
+      return outputFile;
    }
   
    public int calculateNumberOfFiles(int numberOfNodes, int limit){
