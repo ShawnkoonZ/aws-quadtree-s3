@@ -1,0 +1,36 @@
+<project name="aws-quadtree-s3" default="run" basedir=".">
+    <description>
+        aws-quadtree-s3 build file for ant
+    </description>
+
+    <property name="sdk" location="vendor/amazon/aws-java-sdk"/>
+    <property name="build-path" location="build"/>
+    <property name="quad-tree" location="version2"/>
+    <property name="aws-ref" value="aws.java.sdk.classpath"/>
+
+    <path id="aws.java.sdk.classpath">
+        <fileset dir="${sdk}/third-party" includes="**/*.jar"/>
+        <fileset dir="${sdk}/lib" includes="**/*.jar"/>
+        <pathelement location="."/>
+    </path>
+
+    <target name="init">
+        <mkdir dir="${build-path}"/>
+    </target>
+
+    <target name="compile" depends="init" description="compile the project">
+        <javac srcdir="${quad-tree}" destdir="${build-path}" classpathref="${aws-ref}"/>
+        <javac srcdir="." destdir="${build-path}" classpathref="${aws-ref}"/>
+    </target>
+
+    <target name="run" depends="compile" description="run the quad-tree generator">
+        <java classname="QuadTreeTester" classpathref="${aws-ref}" classpath="${build-path}" fork="true"/>
+    </target>
+
+    <target name="clean" description="clean up the class files">
+        <delete dir="${build-path}"/>
+        <delete>
+            <fileset dir="." includes="*.csv"/>
+        </delete>
+    </target>
+</project>

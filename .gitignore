@@ -13,3 +13,7 @@ hs_err_pid*
 
 # IDE / Editors
 .vscode
+
+# other files and paths to ignore
+*.csv
+vendor
