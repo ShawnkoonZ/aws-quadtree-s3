@@ -43,12 +43,12 @@ public class QuadTree {
    private AmazonS3 s3;
    private Region awsRegion;
 
-   private void init(double xLow, double yLow, double xHigh, double yHigh, double minimumGap) {
+   private void init(double xLow, double yLow, double xHigh, double yHigh, double minimumGap, String bucketName) {
      this.startingBinary = "";
-     this.bucketName = "";
      this.minimumGap = minimumGap;
      
      this.setCounter(0);
+     this.setBucketName(bucketName);
      this.setFilePrefix("aws");
      this.setFileExtension("csv");
      this.setPartitionLimit(10);
@@ -61,9 +61,13 @@ public class QuadTree {
    }
 
    public QuadTree() {
-     this.init(0,0,8,8,1);
+     this.init(0,0,8,8,1,"tf-quadtree-main-bucket");
    }
 
+   public QuadTree(double xLow, double yLow, double xHigh, double yHigh, double minimumGap) {
+     this.init(xLow, yLow, xHigh, yHigh, minimumGap, "tf-quadtree-main-bucket");
+   }
+   
    public QuadTree(double xLow, double yLow, double xHigh, double yHigh, double minimumGap, String bucketName) {
      this.init(xLow, yLow, xHigh, yHigh, minimumGap, bucketName);
    }
@@ -180,7 +184,7 @@ public class QuadTree {
      System.out.println("# Fetching data from bucket : " + this.bucketName + "\n");
      
      for(int i = 1; i < this.numberOfFiles - 1; i++){
-       String key = this.filePrefix + i;
+       String key = this.filePrefix + i + "." + this.fileExtension;
        System.out.println("Key: " + key);
        S3Object object = s3.getObject(new GetObjectRequest(this.bucketName, key));
 
@@ -190,7 +194,7 @@ public class QuadTree {
    
    private void initAws(){
      if(this.bucketName.equals("")){
-       this.bucketName = "tf-quadtree-main-bucket"
+       this.bucketName = "tf-quadtree-main-bucket";
      }
      this.credentials = null;
      
@@ -224,7 +228,7 @@ public class QuadTree {
      String key = this.filePrefix + this.fileCounter;
      
      System.out.println("Uploading " + key + "." + this.fileExtension + " to " + this.bucketName);
-     this.s3.putObject(new PutObjectRequest(this.bucketName, key, file));
+     this.s3.putObject(new PutObjectRequest(this.bucketName, key + "." + this.fileExtension, file));
    }
    
    private void setCounter(int count){
